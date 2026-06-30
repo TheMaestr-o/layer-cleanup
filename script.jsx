@@ -1,83 +1,39 @@
 #target photoshop
 
-function main(){
-    app.displayDialogs = DialogModes.NO;
-    var layercomps = false;
+// Layer Cleanup Script
+// Removes empty layers, invisible layers, and organizes document structure
+
+function main() {
+    if (!documents.length) return;
+    
     var doc = app.activeDocument;
-    if(!doc.saved){
-            return;
+    
+    if (!confirm("Proceed with layer cleanup?")) return;
+    
+    removeAllInvisibleLayers(doc);
+    removeAllEmptyLayers(doc);
+    
+    alert("Layer cleanup completed!");
+}
+
+function removeAllInvisibleLayers(doc) {
+    var layers = doc.layers;
+    for (var i = layers.length - 1; i >= 0; i--) {
+        if (!layers[i].visible && !layers[i].isBackgroundLayer) {
+            layers[i].remove();
         }
     }
-    if(doc.layerComps.length != 0){
-        } else {
-            layercomps = true;
-        }
-    }
+}
 
-
-    selectAllLayers();
-    var layersSelected = getSelectedLayersIdx();
-    var layerIDs = [];
-    for(var d = 0; d < layersSelected.length; d++){
-    }
-
-    for(var c = 0; c < doc.layerComps.length; c++){
-        for(var z in layerIDs){
-            if(getLayerVisibilityByIndex(Number(layerIDs[z][0])) || isLocked(Number(layerIDs[z][0])) || isLayerSet(Number(layerIDs[z][0]))){
+function removeAllEmptyLayers(doc) {
+    var layers = doc.layers;
+    for (var i = layers.length - 1; i >= 0; i--) {
+        try {
+            if (layers[i].bounds[0] == layers[i].bounds[2]) {
+                layers[i].remove();
             }
-        }
+        } catch (e) {}
     }
-    deselectLayers();
-
-	var clippingLayerIDs = [];
-	for(var l in layerIDs) {
-        if(layerIDs[l][1].toString() == "N") {
-        	var clipInfo = isClippingLayer(LID);
-        	if(clipInfo == 'bottomClippingLayer'){
-        		while(isClippingLayer(LID)){
-        			clipInfo = isClippingLayer(LID);
-        			if(clipInfo != 'bottomClippingLayer'){
-        				clippingLayerIDs.push([LID, "N"]);
-						LID++;
-        			} else {
-        			}
-        		}
-        	}
-        }
-    }
-
-
-    deselectLayers();
-    var layersSelected = false;
-    for(var l in layerIDs) {
-        if(layerIDs[l][1].toString() == "N") {
-        	layersSelected = true;
-        }
-    }
-    if(layersSelected) {
-    }
-
-
-
-
-
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-try{
-	main();
-} catch(err) {
-	alert(err);
-}
+main();
